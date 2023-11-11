@@ -9,9 +9,9 @@ class BaseMiningModel:
     def __init__(self, features):
         self.neurons = 50
         self.features = features
-        self.loaded_model = None
+        self.loaded_model = '../mining_models/base_model.h5'
         self.window_size = 100
-        self.model_dir = None
+        self.model_dir = '../mining_models/base_model2.h5'
         self.batch_size = 16
         self.learning_rate = 0.01
 
