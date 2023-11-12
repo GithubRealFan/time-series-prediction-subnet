@@ -96,8 +96,15 @@ if __name__ == "__main__":
             vmins, vmaxs, dp_decimal_places, scaled_data_structure = Scaling.scale_ds_with_ts(data_structure)
             samples = bt.tensor(scaled_data_structure)
 
+        existing_model_path = "../mining_models/base_model.h5"
+        # Path where the fine-tuned model will be saved
+        fine_tuned_model_path = "../mining_models/fine_tuned_model.h5"
+
         # will iterate and prepare the dataset and train the model as provided
         prep_dataset = BaseMiningModel.base_model_dataset(samples)
-        base_mining_model = BaseMiningModel(len(prep_dataset.T))
-        base_mining_model = BaseMiningModel(len(prep_dataset.T)).set_model_dir('../mining_models/base_model2.h5')
-        base_mining_model.train(prep_dataset, epochs=25)
+        base_mining_model = BaseMiningModel(len(prep_dataset.T), model_path=existing_model_path)
+        if base_mining_model.loaded_model is not None:
+            base_mining_model.train(prep_dataset, epochs=25, fine_tune=True)
+            base_mining_model.save_model(fine_tuned_model_path)
+        else:
+            print("Failed to load the base model for fine-tuning.")

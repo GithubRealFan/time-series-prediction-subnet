@@ -6,14 +6,14 @@ import tensorflow
 from numpy import ndarray
 
 class BaseMiningModel:
-    def __init__(self, features):
+    def __init__(self, features, model_path=None):
         self.neurons = 50
         self.features = features
-        self.loaded_model = '../mining_models/base_model.h5'
-        self.window_size = 100
-        self.model_dir = '../mining_models/base_model2.h5'
+        self.window_size = 12
+        self.model_dir = model_path
         self.batch_size = 16
         self.learning_rate = 0.01
+        self.loaded_model = self.load_model() if model_path is not None else None
 
     def set_neurons(self, neurons):
         self.neurons = neurons
@@ -21,6 +21,13 @@ class BaseMiningModel:
     def set_window_size(self, window_size):
         self.window_size = window_size
         return self
+
+    def load_model(self):
+        try:
+            return tensorflow.keras.models.load_model(self.model_dir)
+        except OSError as e:
+            print(f"Error loading model: {e}")
+            return None
 
     def set_model_dir(self, model, stream_id=None):
         if model is None and stream_id is not None:
@@ -39,11 +46,14 @@ class BaseMiningModel:
         self.learning_rate = learning_rate
         return self
 
-    def load_model(self):
-        self.loaded_model = tensorflow.keras.models.load_model(self.model_dir)
-        return self
+    def save_model(self, save_path):
+        if self.loaded_model:
+            self.loaded_model.save(save_path)
+            print(f"Model saved to {save_path}")
+        else:
+            print("No model to save.")
 
-    def train(self, data: ndarray, epochs: 100):
+    def train(self, data: ndarray, epochs: 100, fine_tune=False):
         try:
             model = tensorflow.keras.models.load_model(self.model_dir)
         except OSError:
@@ -51,7 +61,7 @@ class BaseMiningModel:
 
         if model is None:
             model = tensorflow.keras.models.Sequential()
-            model.add(tensorflow.keras.layers.LSTM(self.neurons, input_shape=(self.window_size, self.features)))
+            model.add(tensorflow.keras.layers.LSTM(self.neurons, input_shape=(12, self.window_size, self.features)))
             model.add(tensorflow.keras.layers.Dense(self.features))
             optimizer = tensorflow.keras.optimizers.Adam(learning_rate=self.learning_rate)
             model.compile(optimizer=optimizer, loss='mean_squared_error')
@@ -73,6 +83,9 @@ class BaseMiningModel:
 
         model.fit(X_train, Y_train, epochs=epochs, batch_size=self.batch_size)
         model.save(self.model_dir)
+
+        if fine_tune:
+            self.save_model(self.model_dir)
 
     def predict(self, data: ndarray):
         predictions = []
