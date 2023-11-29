@@ -35,12 +35,11 @@ def get_config():
     )
     # Adds override arguments for network and netuid.
     parser.add_argument("--netuid", type=int, default=1, help="The chain subnet uid.")
-    parser.add_argument("--base_model", type=str, default="base_model", help="Choose the base model you want to run (if youre not using a custom one).")
+    parser.add_argument("--base_model", type=str, default="model_v4_1", help="Choose the base model you want to run (if youre not using a custom one).")
     # Adds subtensor specific arguments i.e. --subtensor.chain_endpoint ... --subtensor.network ...
     bt.subtensor.add_args(parser)
     # Adds logging specific arguments i.e. --logging.debug ..., --logging.trace .. or --logging.logging_dir ...
     bt.logging.add_args(parser)
-    
     # Adds wallet specific arguments i.e. --wallet.name ..., --wallet.hotkey ./. or --wallet.path ...
     bt.wallet.add_args(parser)
     # Adds axon specific arguments i.e. --axon.port ...
@@ -73,40 +72,35 @@ def get_model_dir(model):
 # Main takes the config and starts the miner.
 def main( config ):
     base_mining_models = {
-        "base_model": {
-            "creation_id": "model2227",
-            "model_dir": "/mining_models/base_model.h5",
-            "window_size": 12
-        },
         "model_v4_1": {
             "creation_id": "model2308",
             "model_dir": "/mining_models/model_v4_1.h5",
-            "window_size": 100
+            "window_size": 12
         },
         "model_v4_2": {
             "creation_id": "model3005",
             "model_dir": "/mining_models/model_v4_2.h5",
-            "window_size": 100
+            "window_size": 12
         },
         "model_v4_3": {
             "creation_id": "model3103",
             "model_dir": "/mining_models/model_v4_3.h5",
-            "window_size": 100
+            "window_size": 12
         },
         "model_v4_4": {
             "creation_id": "model3104",
             "model_dir": "/mining_models/model_v4_4.h5",
-            "window_size": 100
+            "window_size": 12
         },
         "model_v4_5": {
              "creation_id": "model3105",
              "model_dir": "/mining_models/model_v4_5.h5",
-             "window_size": 100
+             "window_size": 12
         },
         "model_v4_6": {
             "creation_id": "model3106",
             "model_dir": "/mining_models/model_v4_6.h5",
-            "window_size": 100
+            "window_size": 12
         },
     }
 
